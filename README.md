@@ -1,88 +1,162 @@
-# real-time-sales-pipeline-
-A production-ready ETL pipeline for real-time sales data analytics. Built with Apache Airflow for orchestration, PostgreSQL for storage, Docker for containerization.Features automated hourly data fetching, transformation, and storage with web-based monitoring via Adminer. Includes complete setup, DAG scheduling, and data visualization capabilities.
-# Real-Time Sales Data Pipeline
+# 🚀 Real-Time Sales Data Pipeline
 
-A simple ETL pipeline that automatically fetches sales data from an API, processes it, and stores it in PostgreSQL using Apache Airflow.
+A complete end-to-end data engineering project using Kafka, Spark, Airflow, and PostgreSQL.
 
-## Features
+## 🏗️ Architecture
 
-- Automated hourly data updates
-- Apache Airflow for scheduling
-- PostgreSQL database
-- Web UI for monitoring and data viewing
-- Fully containerized with Docker
+- **Data Source**: DummyJSON API (Mock E-commerce Data)
+- **Message Queue**: Apache Kafka
+- **Stream Processing**: Apache Spark
+- **Orchestration**: Apache Airflow
+- **Database**: PostgreSQL
+- **Visualization**: Power BI (Export Ready)
 
-## Tech Stack
+## 📋 Prerequisites
 
-- Apache Airflow 2.7.3
-- PostgreSQL 15
-- Python 3.11
-- Docker & Docker Compose
-- Adminer (Database UI)
+- Docker Desktop for Mac (M2 Optimized)
+- VS Code
+- 8GB RAM minimum
+- 10GB free disk space
 
-## Quick Start
+## 🚀 Quick Start
 
-### Prerequisites
-- Docker & Docker Compose installed
-- 8GB RAM
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/YOUR_USERNAME/real-time-sales-pipeline.git
-cd real-time-sales-pipeline
-```
-
-2. Start the services:
+### 1. Start All Services
 ```bash
 docker-compose up -d
 ```
 
-3. Wait 60 seconds for services to start
-
-4. Access the interfaces:
-   - **Airflow UI:** http://localhost:8081 (admin/admin)
-   - **Database UI (Adminer):** http://localhost:8082 (salesuser/salespass123)
-
-## Usage
-
-### Trigger pipeline manually:
+### 2. Check Service Status
 ```bash
-docker exec sales_airflow airflow dags trigger hourly_sales_dag
+docker-compose ps
 ```
 
-### View data:
+### 3. Access Web Interfaces
+
+- **Airflow**: http://localhost:8081 (username: `admin`, password: `admin`)
+- **Spark Master**: http://localhost:8080
+- **Kafka**: localhost:9093
+
+### 4. View Logs
 ```bash
-docker exec sales_postgres psql -U salesuser -d sales_data -c "SELECT * FROM sales_data LIMIT 10;"
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f kafka-producer
+docker-compose logs -f airflow-webserver
 ```
 
-### Stop services:
+## 📊 Airflow Setup
+
+1. Access Airflow at http://localhost:8081
+2. Login with `admin` / `admin`
+3. Enable the DAG: `sales_etl_pipeline`
+4. Trigger the DAG manually or wait for scheduled run
+
+### Configure PostgreSQL Connection in Airflow
+
+1. Go to Admin → Connections
+2. Add new connection:
+   - **Conn Id**: `postgres_default`
+   - **Conn Type**: `Postgres`
+   - **Host**: `postgres`
+   - **Schema**: `sales_data`
+   - **Login**: `salesuser`
+   - **Password**: `salespass123`
+   - **Port**: `5432`
+
+## 🔍 Verify Data Flow
+
+### Check Kafka Topics
+```bash
+docker exec -it sales_kafka kafka-topics --list --bootstrap-server localhost:9092
+```
+
+### Check PostgreSQL Data
+```bash
+docker exec -it sales_postgres psql -U salesuser -d sales_data -c "SELECT COUNT(*) FROM sales_data;"
+```
+
+### View Real-time Data
+```bash
+docker exec -it sales_postgres psql -U salesuser -d sales_data -c "SELECT * FROM sales_data LIMIT 10;"
+```
+
+## 🛠️ Useful Commands
+
+### Restart Services
+```bash
+docker-compose restart
+```
+
+### Stop Services
 ```bash
 docker-compose down
 ```
 
-## Project Structure
-```
-real-time-sales-pipeline/
-├── airflow/dags/          # Pipeline workflows
-├── postgres/init.sql      # Database setup
-├── docker-compose.yml     # Container configuration
-└── README.md
+### Remove All Data and Start Fresh
+```bash
+docker-compose down -v
+docker-compose up -d
 ```
 
-## Database Schema
+### Execute SQL Queries
+```bash
+docker exec -it sales_postgres psql -U salesuser -d sales_data
+```
 
-**sales_data table:**
-- product_id, title, description
-- price, discount_percentage
-- rating, stock
-- brand, category
-- processed_at (timestamp)
+## 📈 Power BI Integration
 
-## License
+1. Export data:
+```bash
+docker exec -it sales_airflow_webserver python /opt/airflow/scripts/powerbi_connector.py
+```
 
-MIT License
+2. Files will be available in `./data/processed/`
+3. Import CSV files into Power BI Desktop
 
+## 🐛 Troubleshooting
 
+### Airflow not starting
+```bash
+docker-compose logs airflow-webserver
+docker-compose restart airflow-webserver
+```
 
+### Kafka connection issues
+```bash
+docker-compose restart zookeeper kafka
+```
+
+### PostgreSQL connection refused
+```bash
+docker-compose restart postgres
+```
+
+## 📝 Project Structure
+```
+real_time_sales_pipeline/
+├── airflow/          # Airflow DAGs and configs
+├── kafka/            # Kafka producers and consumers
+├── spark/            # Spark streaming jobs
+├── postgres/         # Database initialization
+├── scripts/          # Helper scripts
+└── data/             # Data storage
+```
+
+## 🎯 Features
+
+- ✅ Real-time data ingestion from API
+- ✅ Stream processing with Spark
+- ✅ Automated ETL with Airflow
+- ✅ Data storage in PostgreSQL
+- ✅ Export ready for Power BI
+- ✅ M2 Mac optimized
+- ✅ Docker containerized
+
+## 📧 Support
+
+For issues or questions, check the logs:
+```bash
+docker-compose logs -f [service-name]
+```

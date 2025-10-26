@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: sales_postgres
+    environment:
+      POSTGRES_USER: salesuser
+      POSTGRES_PASSWORD: salespass123
+      POSTGRES_DB: sales_data
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sales_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salesuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  airflow:
+    image: apache/airflow:2.7.3-python3.11
+    container_name: sales_airflow
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+      - AIRFLOW__CORE__LOAD_EXAMPLES=False
+      - _AIRFLOW_DB_MIGRATE=true
+      - _AIRFLOW_WWW_USER_CREATE=true
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=admin
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/logs:/opt/airflow/logs
+    ports:
+      - "8081:8080"
+    command: >
+      bash -c "
+      pip install --no-cache-dir psycopg2-binary requests &&
+      airflow db migrate &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com || true &&
+      airflow scheduler &
+      airflow webserver
+      "
+    networks:
+      - sales_network
+
+  adminer:
+    image: adminer:latest
+    container_name: sales_adminer  
+    ports:
+      - "8082:8080"
+    networks:
+      - sales_network
+
+networks:
+  sales_network:
+    driver: bridge

@@ -1,0 +1,15 @@
+[2025-10-23T17:37:15.408+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: example_setup_teardown_taskflow.outer_teardown scheduled__2025-10-22T17:03:05.300176+00:00 [queued]>
+[2025-10-23T17:37:15.411+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: example_setup_teardown_taskflow.outer_teardown scheduled__2025-10-22T17:03:05.300176+00:00 [queued]>
+[2025-10-23T17:37:15.411+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2025-10-23T17:37:15.416+0000] {taskinstance.py:1382} INFO - Executing <Task(_PythonDecoratedOperator): outer_teardown> on 2025-10-22 17:03:05.300176+00:00
+[2025-10-23T17:37:15.418+0000] {standard_task_runner.py:57} INFO - Started process 1694 to run task
+[2025-10-23T17:37:15.419+0000] {standard_task_runner.py:84} INFO - Running: ['airflow', 'tasks', 'run', 'example_setup_teardown_taskflow', 'outer_teardown', 'scheduled__2025-10-22T17:03:05.300176+00:00', '--job-id', '166', '--raw', '--subdir', '/home/airflow/.local/lib/python3.11/site-packages/airflow/example_dags/example_setup_teardown_taskflow.py', '--cfg-path', '/tmp/tmpxzib4dj3']
+[2025-10-23T17:37:15.420+0000] {standard_task_runner.py:85} INFO - Job 166: Subtask outer_teardown
+[2025-10-23T17:37:15.443+0000] {task_command.py:416} INFO - Running <TaskInstance: example_setup_teardown_taskflow.outer_teardown scheduled__2025-10-22T17:03:05.300176+00:00 [running]> on host eb62ebeb0a5d
+[2025-10-23T17:37:15.482+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='airflow' AIRFLOW_CTX_DAG_ID='example_setup_teardown_taskflow' AIRFLOW_CTX_TASK_ID='outer_teardown' AIRFLOW_CTX_EXECUTION_DATE='2025-10-22T17:03:05.300176+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2025-10-22T17:03:05.300176+00:00'
+[2025-10-23T17:37:15.483+0000] {logging_mixin.py:154} INFO - I am outer_teardown
+[2025-10-23T17:37:15.483+0000] {logging_mixin.py:154} INFO - Tearing down cluster: some cluster id
+[2025-10-23T17:37:15.483+0000] {python.py:194} INFO - Done. Returned value was: None
+[2025-10-23T17:37:15.487+0000] {taskinstance.py:1400} INFO - Marking task as SUCCESS. dag_id=example_setup_teardown_taskflow, task_id=outer_teardown, execution_date=20251022T170305, start_date=20251023T173715, end_date=20251023T173715
+[2025-10-23T17:37:15.518+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 0
+[2025-10-23T17:37:15.527+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check
